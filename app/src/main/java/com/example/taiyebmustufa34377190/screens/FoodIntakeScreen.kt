@@ -1,20 +1,23 @@
 package com.example.taiyebmustufa34377190.screens
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.TextFieldDefaults
@@ -22,13 +25,14 @@ import androidx.compose.material3.TextFieldDefaults
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun FoodIntakeScreen(navController: NavHostController) {
+    val context = LocalContext.current
+
     var selectedFoods by remember { mutableStateOf(setOf<String>()) }
     var selectedPersona by remember { mutableStateOf("") }
     var biggestMealTime by remember { mutableStateOf("") }
     var sleepTime by remember { mutableStateOf("") }
     var wakeTime by remember { mutableStateOf("") }
 
-    // Dropdown State
     var expanded by remember { mutableStateOf(false) }
     val personaOptions = listOf(
         "Health Devotee", "Mindful Eater", "Wellness Striver",
@@ -69,7 +73,6 @@ fun FoodIntakeScreen(navController: NavHostController) {
         item {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Persona Buttons
             Text("Your Persona", style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
             FlowRow(
@@ -91,7 +94,6 @@ fun FoodIntakeScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Persona Dropdown
             Text("Which persona best fits you?")
             ExposedDropdownMenuBox(
                 expanded = expanded,
@@ -129,7 +131,6 @@ fun FoodIntakeScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Timing Inputs
             Text("Timings", style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -167,7 +168,22 @@ fun FoodIntakeScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = { navController.popBackStack() },
+                onClick = {
+                    // Save data to SharedPreferences
+                    val sharedPref = context.getSharedPreferences("FoodIntakePrefs", Context.MODE_PRIVATE)
+                    sharedPref.edit().apply {
+                        putStringSet("selectedFoods", selectedFoods)
+                        putString("selectedPersona", selectedPersona)
+                        putString("biggestMealTime", biggestMealTime)
+                        putString("sleepTime", sleepTime)
+                        putString("wakeTime", wakeTime)
+
+                        apply()
+                    }
+
+                    navController.popBackStack()
+
+                },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
             ) {
