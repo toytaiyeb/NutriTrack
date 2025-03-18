@@ -55,7 +55,7 @@ fun WelcomeScreen(navController: NavHostController) {
         )
 
         Button(
-            onClick = { navController.navigate("login") },
+            onClick = { navController.navigate("login_screen") },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),

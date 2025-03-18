@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.taiyebmustufa34377190.navigation.Screens
 import com.example.taiyebmustufa34377190.utils.validateCredentials
 
 
@@ -68,7 +69,7 @@ fun LoginScreen(navController: NavHostController) {
                 if (validateCredentials(selectedId, phoneNumber)) {
                     showError = false
                     // Navigate or do next steps here
-                    navController.popBackStack() // Example action
+                    navController.navigate(Screens.FoodIntake.route)
                 } else {
                     showError = true
                 }
