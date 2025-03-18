@@ -66,6 +66,7 @@ fun LoginScreen(navController: NavHostController) {
         // Continue Button
         Button(
             onClick = {
+
                 if (validateCredentials(selectedId, phoneNumber)) {
                     showError = false
                     // Navigate or do next steps here
