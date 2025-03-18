@@ -15,20 +15,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.taiyebmustufa34377190.navigation.Screens
+import com.example.taiyebmustufa34377190.utils.User
 import com.example.taiyebmustufa34377190.utils.parseCsv
 import com.example.taiyebmustufa34377190.utils.validateCredentials
-
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavHostController) {
     val context = LocalContext.current
-    val users = remember { parseCsv(context) }
-    val ids = users.map { it.userId }
+    var users by remember { mutableStateOf<List<User>>(emptyList()) }
 
     var selectedId by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
     var phoneNumber by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
+
+    // Non-blocking CSV load
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            users = parseCsv(context)
+        }
+    }
+
+    val ids = users.map { it.userId }
 
     Column(
         modifier = Modifier
@@ -39,7 +49,6 @@ fun LoginScreen(navController: NavHostController) {
         Text("Log in", fontSize = 24.sp)
         Spacer(modifier = Modifier.height(20.dp))
 
-        // ID Dropdown
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = !expanded }
@@ -72,7 +81,6 @@ fun LoginScreen(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Phone Number Input
         OutlinedTextField(
             value = phoneNumber,
             onValueChange = { phoneNumber = it },
@@ -90,7 +98,6 @@ fun LoginScreen(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Continue Button
         Button(
             onClick = {
                 if (validateCredentials(selectedId, phoneNumber.trim(), users)) {
