@@ -1,5 +1,6 @@
 package com.example.taiyebmustufa34377190.screens
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -100,9 +101,18 @@ fun LoginScreen(navController: NavHostController) {
 
         Button(
             onClick = {
-//                if (validateCredentials(selectedId, phoneNumber.trim(), users)) {
-                if(true){
+                if (validateCredentials(selectedId, phoneNumber.trim(), users)) {
                     showError = false
+
+                    // Save to SharedPreferences
+                    val sharedPref = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+
+                    sharedPref.edit().apply {
+                        putString("phoneNumber", phoneNumber.trim())
+                        putString("userId", selectedId)
+                        apply()
+                    }
+
                     navController.navigate(Screens.FoodIntake.route)
                 } else {
                     showError = true

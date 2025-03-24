@@ -1,6 +1,7 @@
 package com.example.taiyebmustufa34377190.screens
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,11 +19,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.taiyebmustufa34377190.navigation.Screens
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun FoodIntakeScreen(navController: NavHostController) {
+fun FoodIntakeScreen(
+    navController: NavHostController
+) {
     val context = LocalContext.current
+
+    // Retrieve phoneNumber and userId from shared preferences
+    val sharedPrefs = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+    val phoneNumber = sharedPrefs.getString("phoneNumber", "") ?: ""
+    val userId = sharedPrefs.getString("userId", "") ?: ""
 
     var selectedFoods by remember { mutableStateOf(setOf<String>()) }
     var selectedPersona by remember { mutableStateOf("") }
@@ -48,7 +57,6 @@ fun FoodIntakeScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Food checkboxes
         val foodOptions = listOf("Fruits", "Vegetables", "Grains", "Red Meat", "Seafood", "Poultry", "Fish", "Eggs", "Nuts/Seeds")
         items(foodOptions) { food ->
             Row(
@@ -101,7 +109,6 @@ fun FoodIntakeScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // ✅ Timing Questions
             OutlinedTextField(
                 value = biggestMealTime,
                 onValueChange = { biggestMealTime = it },
@@ -137,8 +144,8 @@ fun FoodIntakeScreen(navController: NavHostController) {
 
             Button(
                 onClick = {
-                    val sharedPref = context.getSharedPreferences("FoodIntakePrefs", Context.MODE_PRIVATE)
-                    sharedPref.edit().apply {
+                    // Save to my_prefs consistently
+                    sharedPrefs.edit().apply {
                         putStringSet("selectedFoods", selectedFoods)
                         putString("selectedPersona", selectedPersona)
                         putString("biggestMealTime", biggestMealTime)
@@ -147,12 +154,18 @@ fun FoodIntakeScreen(navController: NavHostController) {
                         apply()
                     }
                     Toast.makeText(context, "Saved successfully!", Toast.LENGTH_SHORT).show()
-                    navController.popBackStack()
+                    Log.d("NAVIGATION_DEBUG", "Navigating to Home with phoneNumber=$phoneNumber and userId=$userId")
+
+
+                    navController.navigate(Screens.Home.createRoute(phoneNumber, userId)) {
+                        popUpTo(Screens.FoodIntake.route) { inclusive = true }
+                    }
+
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
             ) {
-                Text("Save", color = Color.White)
+                Text("Save and Go Home", color = Color.White)
             }
         }
     }
@@ -182,21 +195,21 @@ fun FoodIntakeScreen(navController: NavHostController) {
             },
             dismissButton = {
                 TextButton(onClick = { showPersonaModal = false }) {
-                    Text("Close")
+                    Text("Cancel")
                 }
             }
         )
     }
 }
 
-fun getPersonaDescription(personaName: String): String {
-    return when (personaName) {
-        "Health Devotee" -> "You are committed to healthy eating, focusing on nutrient-dense foods and an active lifestyle."
-        "Mindful Eater" -> "You pay attention to how and why you eat, often practicing mindful eating."
-        "Wellness Striver" -> "You try to make balanced food choices and strive for wellness, though you indulge occasionally."
-        "Balance Seeker" -> "You aim for balance between health and enjoyment in your diet."
-        "Health Procrastinator" -> "You want to eat healthier but tend to delay changes."
-        "Food Carefree" -> "You eat what you love without worrying too much about health trends."
-        else -> "No description available."
+fun getPersonaDescription(persona: String): String {
+    return when (persona) {
+        "Health Devotee" -> "Always mindful and consistent with healthy choices."
+        "Mindful Eater" -> "Pays attention to the eating experience."
+        "Wellness Striver" -> "Tries to eat healthy but struggles occasionally."
+        "Balance Seeker" -> "Aims for balance in food choices."
+        "Health Procrastinator" -> "Plans to improve but postpones actions."
+        "Food Carefree" -> "Eats freely without concern for health impact."
+        else -> ""
     }
 }
