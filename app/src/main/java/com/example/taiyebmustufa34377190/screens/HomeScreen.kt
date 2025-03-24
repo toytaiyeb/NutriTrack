@@ -69,16 +69,16 @@ fun HomeScreen(navController: NavHostController, phoneNumber: String, userId: St
 
         Spacer(modifier = Modifier.height(24.dp))
 
-//        // Circular image
-//        Image(
-//            painter = painterResource(id = R.drawable.food_plate), // put your image in res/drawable as "food_plate.png"
-//            contentDescription = "Food plate",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .size(180.dp)
-//                .clip(CircleShape)
-//                .align(Alignment.CenterHorizontally)
-//        )
+        // Circular image
+        Image(
+            painter = painterResource(id = R.drawable.food), // put your image in res/drawable as "food_plate.png"
+            contentDescription = "Food plate",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(180.dp)
+                .clip(CircleShape)
+                .align(Alignment.CenterHorizontally)
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
 
