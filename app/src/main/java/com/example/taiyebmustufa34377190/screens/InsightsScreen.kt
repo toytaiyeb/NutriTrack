@@ -18,32 +18,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.taiyebmustufa34377190.navigation.Screens
+import com.example.taiyebmustufa34377190.utils.getUserCategoryScores
 import com.example.taiyebmustufa34377190.utils.getUserFoodScore
 
 @Composable
-fun InsightsScreen(navController: NavHostController, phoneNumber: String, userId: String)  {
-    var score by remember { mutableStateOf<String?>(null) }
+fun InsightsScreen(navController: NavHostController, phoneNumber: String, userId: String) {
+    var totalScore by remember { mutableStateOf<String?>(null) }
+    var categoryScores by remember { mutableStateOf<Map<String, Float>?>(null) }
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        score = getUserFoodScore(context, phoneNumber, userId)
+        totalScore = getUserFoodScore(context, phoneNumber, userId)
+        categoryScores = getUserCategoryScores(context, phoneNumber, userId)
     }
-    val categories = mapOf(
-        "Vegetables" to 10,
-        "Fruits" to 10,
-        "Grains & Cereals" to 10,
-        "Whole Grains" to 10,
-        "Meat & Alternatives" to 10,
-        "Dairy" to 10,
-        "Water" to 2,
-        "Unsaturated Fats" to 10,
-        "Sodium" to 10,
-        "Sugar" to 10,
-        "Alcohol" to 2,
-        "Discretionary Foods" to 8
+
+    // Default max scores for each category
+    val categoryMaxScores = mapOf(
+        "Vegetables" to 10f,
+        "Fruits" to 10f,
+        "Grains & Cereals" to 10f,
+        "Whole Grains" to 10f,
+        "Meat & Alternatives" to 10f,
+        "Dairy" to 10f,
+        "Water" to 10f,
+        "Unsaturated Fats" to 10f,
+        "Sodium" to 10f,
+        "Sugar" to 10f,
+        "Alcohol" to 10f,
+        "Discretionary Foods" to 10f
     )
-
-
 
     Scaffold(
         bottomBar = {
@@ -63,9 +66,27 @@ fun InsightsScreen(navController: NavHostController, phoneNumber: String, userId
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
-            categories.forEach { (category, score) ->
-                ProgressBarCategory(category = category, progress = score * 10)
-                Spacer(modifier = Modifier.height(8.dp))
+            // Display category progress bars
+            categoryScores?.let { scores ->
+                scores.forEach { (category, score) ->
+                    val maxScore = categoryMaxScores[category] ?: 10f
+                    ProgressBarCategory(
+                        category = category,
+                        progress = score / maxScore,
+                        scoreText = "${score.toInt()}/${maxScore.toInt()}"
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            } ?: run {
+                // Show loading state if scores aren't loaded yet
+                categoryMaxScores.forEach { (category, maxScore) ->
+                    ProgressBarCategory(
+                        category = category,
+                        progress = 0f,
+                        scoreText = "0/${maxScore.toInt()}"
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -75,7 +96,8 @@ fun InsightsScreen(navController: NavHostController, phoneNumber: String, userId
                 fontSize = 16.sp,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-            // --- Score Card ---
+
+            // Score Card
             Card(
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth(),
@@ -88,7 +110,7 @@ fun InsightsScreen(navController: NavHostController, phoneNumber: String, userId
                     Icon(Icons.Default.KeyboardArrowRight, contentDescription = null)
                     Column(modifier = Modifier.weight(1f)) {
                         Text(text = "Your Food Quality score", fontSize = 14.sp)
-                        score?.let {
+                        totalScore?.let {
                             Text(
                                 text = "$it/100",
                                 fontSize = 20.sp,
@@ -99,17 +121,14 @@ fun InsightsScreen(navController: NavHostController, phoneNumber: String, userId
                     }
                     Text(text = "See all scores >", fontSize = 12.sp, color = Color.Gray)
                 }
-
             }
 
             LinearProgressIndicator(
-                progress = (score?.toFloat() ?: 0f) / 100f,
+                progress = (totalScore?.toFloat() ?: 0f) / 100f,
                 modifier = Modifier.fillMaxWidth(),
                 color = Color(0xFF6200EE),
                 trackColor = Color.LightGray
             )
-
-
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -135,20 +154,20 @@ fun InsightsScreen(navController: NavHostController, phoneNumber: String, userId
 }
 
 @Composable
-fun ProgressBarCategory(category: String, progress: Int) {
+fun ProgressBarCategory(category: String, progress: Float, scoreText: String) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start
     ) {
         Text(text = category, fontSize = 14.sp)
         LinearProgressIndicator(
-            progress = progress / 100f,
+            progress = progress,
             modifier = Modifier.fillMaxWidth(),
             color = Color(0xFF6200EE),
             trackColor = Color.LightGray
         )
         Text(
-            text = "$progress/10",
+            text = scoreText,
             fontSize = 12.sp,
             modifier = Modifier.align(Alignment.End)
         )
