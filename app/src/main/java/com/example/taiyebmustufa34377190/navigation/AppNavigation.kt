@@ -13,6 +13,7 @@ sealed class Screens(val route: String) {
     object Login : Screens("login_screen")
     object FoodIntake : Screens("food_intake_screen")
     object Home : Screens("home_screen")
+    object Insights : Screens("insights_screen")
 
     fun createRoute(phoneNumber: String, userId: String): String {
         return "home_screen/$phoneNumber/$userId"
@@ -39,6 +40,10 @@ fun AppNavigation(navController: NavHostController) {
             val phoneNumber = backStackEntry.arguments?.getString("phoneNumber") ?: ""
             val userId = backStackEntry.arguments?.getString("userId") ?: ""
             HomeScreen(navController = navController, phoneNumber = phoneNumber, userId = userId)
+        }
+
+        composable(Screens.Insights.route) {
+            InsightsScreen(navController = navController)
         }
 
     }

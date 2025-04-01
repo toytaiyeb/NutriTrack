@@ -131,6 +131,7 @@ fun HomeScreen(navController: NavHostController, phoneNumber: String, userId: St
         }
     }
 }
+
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
     NavigationBar(
@@ -159,7 +160,11 @@ fun BottomNavigationBar(navController: NavHostController) {
                 },
                 selected = isSelected,
                 onClick = {
-                    // TODO: handle navController.navigate() here
+                    when (item) {
+                        "Home" -> navController.navigate(Screens.Home.route)
+                        "Insights" -> navController.navigate(Screens.Insights.route)
+
+                    }
                 },
                 colors = NavigationBarItemDefaults.colors(
                     indicatorColor = Color.Transparent,
@@ -170,4 +175,43 @@ fun BottomNavigationBar(navController: NavHostController) {
         }
     }
 }
+//@Composable
+//fun BottomNavigationBar(navController: NavHostController) {
+//    NavigationBar(
+//        containerColor = Color.White
+//    ) {
+//        val items = listOf("Home", "Insights", "NutriCoach", "Settings")
+//
+//        items.forEach { item ->
+//            val isSelected = item == "Home"
+//
+//            NavigationBarItem(
+//                icon = {
+//                    when (item) {
+//                        "Home" -> Icon(Icons.Default.Home, contentDescription = "Home")
+//                        "Insights" -> Icon(Icons.Default.ShoppingCart, contentDescription = "Insights")
+//                        "NutriCoach" -> Icon(Icons.Default.Person, contentDescription = "NutriCoach")
+//                        "Settings" -> Icon(Icons.Default.Settings, contentDescription = "Settings")
+//                    }
+//                },
+//                label = {
+//                    Text(
+//                        text = item,
+//                        fontSize = 10.sp,
+//                        color = if (isSelected) Color(0xFF6200EE) else Color.Gray
+//                    )
+//                },
+//                selected = isSelected,
+//                onClick = {
+//                    // TODO: handle navController.navigate() here
+//                },
+//                colors = NavigationBarItemDefaults.colors(
+//                    indicatorColor = Color.Transparent,
+//                    selectedIconColor = Color(0xFF6200EE),
+//                    unselectedIconColor = Color.Gray
+//                )
+//            )
+//        }
+//    }
+//}
 
