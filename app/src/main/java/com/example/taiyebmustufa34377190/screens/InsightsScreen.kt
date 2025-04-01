@@ -245,7 +245,8 @@ fun BottomNavigationBars(navController: NavHostController) {
                 onClick = {
                     when (item) {
                         "Home" -> navController.navigate(Screens.Home.createRouteHs(phoneNumber, userId))
-                        "Insights" -> navController.navigate(Screens.Insights.route)
+                        "Insights" -> navController.navigate(Screens.Insights.createRouteIs(phoneNumber, userId))
+                        "NutriCoach" -> navController.navigate(Screens.Welcome.route)
 
                     }
                 },
