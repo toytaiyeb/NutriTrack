@@ -1,6 +1,7 @@
 package com.example.taiyebmustufa34377190.screens
 
 import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,6 +33,8 @@ fun InsightsScreen(navController: NavHostController, phoneNumber: String, userId
         categoryScores = getUserCategoryScores(context, phoneNumber, userId)
     }
 
+
+
     // Default max scores for each category
     val categoryMaxScores = mapOf(
         "Vegetables" to 10f,
@@ -47,6 +50,38 @@ fun InsightsScreen(navController: NavHostController, phoneNumber: String, userId
         "Alcohol" to 10f,
         "Discretionary Foods" to 10f
     )
+    val shareUserInsights = {
+        val scoreEmoji = when {
+            (totalScore?.toFloatOrNull() ?: 0f) > 75 -> "🌟"
+            (totalScore?.toFloatOrNull() ?: 0f) > 50 -> "👍"
+            else -> "💪"
+        }
+
+        val shareText = buildString {
+            append("${scoreEmoji} My Nutrition Insights ${scoreEmoji}\n\n")
+            append("🍎 Total Food Quality Score: ${totalScore ?: "N/A"}/100\n\n")
+            append("📊 Category Breakdown:\n")
+
+            categoryScores?.forEach { (category, score) ->
+                val maxScore = categoryMaxScores[category] ?: 10f
+                val progress = (score / maxScore * 100).toInt()
+                val progressBar = "[" + "▰".repeat(progress / 10) + "▱".repeat(10 - progress / 10) + "]"
+                append("• $category: $progressBar ${score.toInt()}/${maxScore.toInt()}\n")
+            } ?: append("Loading detailed scores...\n")
+
+            append("\nLet's work on our nutrition together!\n")
+            append("Shared via Nutrition App")
+        }
+
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, shareText)
+            putExtra(Intent.EXTRA_SUBJECT, "My Nutrition Report")
+        }
+
+        context.startActivity(Intent.createChooser(shareIntent, "Share your insights"))
+    }
 
     Scaffold(
         bottomBar = {
@@ -137,7 +172,7 @@ fun InsightsScreen(navController: NavHostController, phoneNumber: String, userId
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
-                    onClick = { /* Share logic */ },
+                    onClick = shareUserInsights,
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(text = "Share with someone")
