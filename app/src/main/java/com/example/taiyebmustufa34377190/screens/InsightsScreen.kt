@@ -2,7 +2,9 @@ package com.example.taiyebmustufa34377190.screens
 
 import android.content.Context
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -41,7 +43,7 @@ fun InsightsScreen(navController: NavHostController, phoneNumber: String, userId
         "Discretionary Foods" to 8
     )
 
-    val totalScore = 40 // This should be dynamically calculated
+
 
     Scaffold(
         bottomBar = {
@@ -50,6 +52,7 @@ fun InsightsScreen(navController: NavHostController, phoneNumber: String, userId
     ) { padding ->
         Column(
             modifier = Modifier
+                .verticalScroll(rememberScrollState())
                 .fillMaxSize()
                 .padding(24.dp)
                 .padding(padding)
@@ -96,20 +99,16 @@ fun InsightsScreen(navController: NavHostController, phoneNumber: String, userId
                     }
                     Text(text = "See all scores >", fontSize = 12.sp, color = Color.Gray)
                 }
+
             }
 
             LinearProgressIndicator(
-                progress = totalScore / 100f,
+                progress = (score?.toFloat() ?: 0f) / 100f,
                 modifier = Modifier.fillMaxWidth(),
                 color = Color(0xFF6200EE),
                 trackColor = Color.LightGray
             )
-            Text(
-                text = "$totalScore/100",
 
-                fontSize = 14.sp,
-                modifier = Modifier.align(Alignment.End)
-            )
 
 
             Spacer(modifier = Modifier.height(24.dp))
