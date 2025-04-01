@@ -1,5 +1,6 @@
 package com.example.taiyebmustufa34377190.screens
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -138,6 +139,12 @@ fun BottomNavigationBar(navController: NavHostController) {
         containerColor = Color.White
     ) {
         val items = listOf("Home", "Insights", "NutriCoach", "Settings")
+        val context = LocalContext.current
+
+        // Retrieve phoneNumber and userId from shared preferences
+        val sharedPrefs = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+        val phoneNumber = sharedPrefs.getString("phoneNumber", "") ?: ""
+        val userId = sharedPrefs.getString("userId", "") ?: ""
 
         items.forEach { item ->
             val isSelected = item == "Home"
@@ -162,7 +169,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                 onClick = {
                     when (item) {
                         "Home" -> navController.navigate(Screens.Home.route)
-                        "Insights" -> navController.navigate(Screens.Insights.route)
+                        "Insights" -> navController.navigate(Screens.Home.createRouteIs(phoneNumber, userId))
 
                     }
                 },

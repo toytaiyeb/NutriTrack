@@ -15,8 +15,11 @@ sealed class Screens(val route: String) {
     object Home : Screens("home_screen")
     object Insights : Screens("insights_screen")
 
-    fun createRoute(phoneNumber: String, userId: String): String {
+    fun createRouteHs(phoneNumber: String, userId: String): String {
         return "home_screen/$phoneNumber/$userId"
+    }
+    fun createRouteIs(phoneNumber: String, userId: String): String {
+        return "insights_screen/$phoneNumber/$userId"
     }
 }
 
@@ -41,10 +44,19 @@ fun AppNavigation(navController: NavHostController) {
             val userId = backStackEntry.arguments?.getString("userId") ?: ""
             HomeScreen(navController = navController, phoneNumber = phoneNumber, userId = userId)
         }
-
-        composable(Screens.Insights.route) {
-            InsightsScreen(navController = navController)
+        composable(
+            route = Screens.Insights.route + "/{phoneNumber}/{userId}",
+            arguments = listOf(
+                navArgument("phoneNumber") { type = NavType.StringType },
+                navArgument("userId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val phoneNumber = backStackEntry.arguments?.getString("phoneNumber") ?: ""
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            InsightsScreen(navController = navController, phoneNumber = phoneNumber, userId = userId)
         }
+
+
 
     }
 }

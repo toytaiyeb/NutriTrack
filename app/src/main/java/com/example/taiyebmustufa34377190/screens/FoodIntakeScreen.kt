@@ -157,7 +157,7 @@ fun FoodIntakeScreen(
                     Log.d("NAVIGATION_DEBUG", "Navigating to Home with phoneNumber=$phoneNumber and userId=$userId")
 
 
-                    navController.navigate(Screens.Home.createRoute(phoneNumber, userId)) {
+                    navController.navigate(Screens.Home.createRouteHs(phoneNumber, userId)) {
                         popUpTo(Screens.FoodIntake.route) { inclusive = true }
                     }
 
